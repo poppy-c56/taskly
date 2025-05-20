@@ -51,9 +51,9 @@ cd ../client
 npm install
 ```
 
-**Configuration:**
+# Configuration:
 
-# Backend .env (server/.env):
+**Backend .env (server/.env)**:
 
 ```bash
 MONGODB_URI=mongodb://localhost:27017/taskly
@@ -62,19 +62,19 @@ JWT_EXPIRES_IN=90d
 PORT=5000
 ```
 
-# Frontend .env (client/.env):
+**Frontend .env (client/.env)**:
 
 ```bash
 VITE_API_BASE_URL=http://localhost:5000/api
 ```
 
-# Start backend (from /server)
+**Start backend (from /server)**
 
 ```bash
 npm run dev
 ```
 
-# Start frontend (from /client)
+**Start frontend (from /client)**
 
 ```bash
 npm run dev
