@@ -4,46 +4,63 @@ import axios from "axios";
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [token, setToken] = useState(localStorage.getItem("token"));
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [authState, setAuthState] = useState({
+    user: null,
+    isAuthenticated: false,
+    token: localStorage.getItem("token") || null,
+    loading: true,
+    error: null,
+    teamMembers: [],
+  });
 
   useEffect(() => {
-    if (token) {
-      axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+    if (authState.token) {
+      axios.defaults.headers.common["Authorization"] =
+        `Bearer ${authState.token}`;
     } else {
       delete axios.defaults.headers.common["Authorization"];
     }
-  }, [token]);
+  }, [authState.token]);
 
   useEffect(() => {
-    const loadUser = async () => {
-      if (!token) {
-        setLoading(false);
+    const loadUserData = async () => {
+      if (!authState.token) {
+        setAuthState((prev) => ({ ...prev, loading: false }));
         return;
       }
 
       try {
-        const res = await axios.get("/api/auth/me");
-        setUser(res.data);
-        setIsAuthenticated(true);
+        const [userRes, teamRes] = await Promise.all([
+          axios.get("/api/auth/me"),
+          axios.get("/api/teams/members"),
+        ]);
+
+        setAuthState((prev) => ({
+          ...prev,
+          user: userRes.data,
+          isAuthenticated: true,
+          teamMembers: teamRes.data,
+          loading: false,
+          error: null,
+        }));
       } catch (err) {
         console.error(err);
         localStorage.removeItem("token");
-        setToken(null);
-        setUser(null);
-        setIsAuthenticated(false);
+        setAuthState({
+          user: null,
+          isAuthenticated: false,
+          token: null,
+          loading: false,
+          error: null,
+          teamMembers: [],
+        });
       }
-      setLoading(false);
     };
 
-    loadUser();
-  }, [token]);
+    loadUserData();
+  }, [authState.token]);
 
   const register = async (name, email, password) => {
-    setError(null);
     try {
       const res = await axios.post("/api/auth/register", {
         name,
@@ -52,52 +69,93 @@ export const AuthProvider = ({ children }) => {
       });
       if (res.data.token) {
         localStorage.setItem("token", res.data.token);
-        setToken(res.data.token);
-        setUser(res.data.user);
-        setIsAuthenticated(true);
+        setAuthState((prev) => ({
+          ...prev,
+          token: res.data.token,
+          user: res.data.user,
+          isAuthenticated: true,
+          error: null,
+        }));
       }
       return res.data;
     } catch (err) {
-      setError(err.response?.data?.message || "Registration failed");
+      setAuthState((prev) => ({
+        ...prev,
+        error: err.response?.data?.message || "Registration failed",
+      }));
       throw err;
     }
   };
 
   const login = async (email, password) => {
-    setError(null);
     try {
       const res = await axios.post("/api/auth/login", { email, password });
       if (res.data.token) {
         localStorage.setItem("token", res.data.token);
-        setToken(res.data.token);
-        setUser(res.data.user);
-        setIsAuthenticated(true);
+        setAuthState((prev) => ({
+          ...prev,
+          token: res.data.token,
+          user: res.data.user,
+          isAuthenticated: true,
+          error: null,
+        }));
       }
       return res.data;
     } catch (err) {
-      setError(err.response?.data?.message || "Invalid credentials");
+      setAuthState((prev) => ({
+        ...prev,
+        error: err.response?.data?.message || "Invalid credentials",
+      }));
       throw err;
     }
   };
 
   const logout = () => {
     localStorage.removeItem("token");
-    setToken(null);
-    setUser(null);
-    setIsAuthenticated(false);
+    setAuthState({
+      user: null,
+      isAuthenticated: false,
+      token: null,
+      loading: false,
+      error: null,
+      teamMembers: [],
+    });
     delete axios.defaults.headers.common["Authorization"];
+  };
+
+  const addTeamMember = async (email) => {
+    try {
+      const res = await axios.post(
+        "/api/teams/members",
+        { email },
+        {
+          headers: {
+            Authorization: `Bearer ${authState.token}`,
+          },
+        }
+      );
+      setAuthState((prev) => ({
+        ...prev,
+        teamMembers: [...prev.teamMembers, res.data],
+      }));
+      return res.data;
+    } catch (err) {
+      setAuthState((prev) => ({
+        ...prev,
+        error: err.response?.data?.message || "Failed to add team member",
+      }));
+      throw err;
+    }
   };
 
   return (
     <AuthContext.Provider
       value={{
-        user,
-        isAuthenticated,
-        loading,
-        error,
+        authState,
         register,
         login,
         logout,
+        addTeamMember,
       }}
     >
       {children}

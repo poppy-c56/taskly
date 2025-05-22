@@ -4,9 +4,9 @@ import { AuthContext } from "../context/AuthContext";
 import axios from "axios";
 
 const TaskForm = () => {
-  const { id } = useParams(); 
+  const { id } = useParams();
   const navigate = useNavigate();
-  const { authState } = useContext(AuthContext);
+  const { authState, addTeamMember } = useContext(AuthContext);
   const isEditing = !!id;
 
   const [formData, setFormData] = useState({
@@ -18,28 +18,12 @@ const TaskForm = () => {
     assignedTo: [],
   });
 
-  const [teamMembers, setTeamMembers] = useState([]);
+  const [newMemberEmail, setNewMemberEmail] = useState("");
   const [loading, setLoading] = useState(isEditing);
   const [error, setError] = useState(null);
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
-    const fetchTeamMembers = async () => {
-      try {
-        const response = await axios.get("/api/teams/members", {
-          headers: {
-            Authorization: `Bearer ${authState.token}`,
-          },
-        });
-        setTeamMembers(response.data);
-      } catch (err) {
-        console.error("Error fetching team members:", err);
-        setError(
-          "Failed to load team members. You can still create a task without assigning it."
-        );
-      }
-    };
-
     const fetchTaskData = async () => {
       if (!isEditing) return;
 
@@ -52,14 +36,16 @@ const TaskForm = () => {
         });
 
         const task = response.data;
-        if (task.dueDate) {
-          const date = new Date(task.dueDate);
-          task.dueDate = date.toISOString().split("T")[0];
-        }
-
-        task.assignedTo = task.assignedTo.map((user) => user._id);
-
-        setFormData(task);
+        setFormData({
+          title: task.title,
+          description: task.description,
+          dueDate: task.dueDate
+            ? new Date(task.dueDate).toISOString().split("T")[0]
+            : "",
+          priority: task.priority,
+          status: task.status,
+          assignedTo: task.assignedTo.map((user) => user._id),
+        });
       } catch (err) {
         console.error("Error fetching task:", err);
         setError("Failed to load task data. Please try again.");
@@ -68,7 +54,6 @@ const TaskForm = () => {
       }
     };
 
-    fetchTeamMembers();
     fetchTaskData();
   }, [id, isEditing, authState.token]);
 
@@ -81,13 +66,22 @@ const TaskForm = () => {
   };
 
   const handleAssigneeChange = (e) => {
-    const selectedOptions = [...e.target.selectedOptions];
+    const selectedOptions = Array.from(e.target.selectedOptions);
     const selectedValues = selectedOptions.map((option) => option.value);
-
     setFormData({
       ...formData,
       assignedTo: selectedValues,
     });
+  };
+
+  const handleAddTeamMember = async (e) => {
+    e.preventDefault();
+    try {
+      await addTeamMember(newMemberEmail);
+      setNewMemberEmail("");
+    } catch (err) {
+      setError(err.message);
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -96,16 +90,19 @@ const TaskForm = () => {
     setError(null);
 
     try {
-      const requestData = { ...formData };
+      const payload = {
+        ...formData,
+        dueDate: formData.dueDate || undefined,
+      };
 
       if (isEditing) {
-        await axios.put(`/api/tasks/${id}`, requestData, {
+        await axios.put(`/api/tasks/${id}`, payload, {
           headers: {
             Authorization: `Bearer ${authState.token}`,
           },
         });
       } else {
-        await axios.post("/api/tasks", requestData, {
+        await axios.post("/api/tasks", payload, {
           headers: {
             Authorization: `Bearer ${authState.token}`,
           },
@@ -115,7 +112,9 @@ const TaskForm = () => {
       navigate("/dashboard");
     } catch (err) {
       console.error("Error submitting task:", err);
-      setError("Failed to save task. Please try again.");
+      setError(
+        err.response?.data?.message || "Failed to save task. Please try again."
+      );
     } finally {
       setSubmitting(false);
     }
@@ -126,137 +125,138 @@ const TaskForm = () => {
   }
 
   return (
-    <div className="task-form-container max-w-xl mx-auto">
+    <div className="task-form-container max-w-2xl mx-auto p-4">
       <h2 className="text-2xl font-bold mb-6">
         {isEditing ? "Edit Task" : "Create New Task"}
       </h2>
 
       {error && (
-        <div
-          className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4"
-          role="alert"
-        >
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
           {error}
         </div>
       )}
 
-      <form onSubmit={handleSubmit}>
-        <div className="mb-4">
-          <label
-            htmlFor="title"
-            className="block text-gray-700 text-sm font-bold mb-2"
-          >
-            Title *
-          </label>
-          <input
-            type="text"
-            id="title"
-            name="title"
-            value={formData.title}
-            onChange={handleChange}
-            className="w-full px-3 py-2 border rounded shadow-sm focus:outline-none focus:border-blue-500"
-            required
-          />
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="md:col-span-2">
+            <label className="block text-gray-700 text-sm font-bold mb-2">
+              Title *
+            </label>
+            <input
+              type="text"
+              name="title"
+              value={formData.title}
+              onChange={handleChange}
+              className="w-full px-3 py-2 border rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              required
+            />
+          </div>
+
+          <div className="md:col-span-2">
+            <label className="block text-gray-700 text-sm font-bold mb-2">
+              Description
+            </label>
+            <textarea
+              name="description"
+              value={formData.description}
+              onChange={handleChange}
+              className="w-full px-3 py-2 border rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              rows="4"
+            />
+          </div>
+
+          <div>
+            <label className="block text-gray-700 text-sm font-bold mb-2">
+              Due Date
+            </label>
+            <input
+              type="date"
+              name="dueDate"
+              value={formData.dueDate}
+              onChange={handleChange}
+              min={new Date().toISOString().split("T")[0]}
+              className="w-full px-3 py-2 border rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+
+          <div>
+            <label className="block text-gray-700 text-sm font-bold mb-2">
+              Priority
+            </label>
+            <select
+              name="priority"
+              value={formData.priority}
+              onChange={handleChange}
+              className="w-full px-3 py-2 border rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="low">Low</option>
+              <option value="medium">Medium</option>
+              <option value="high">High</option>
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-gray-700 text-sm font-bold mb-2">
+              Status
+            </label>
+            <select
+              name="status"
+              value={formData.status}
+              onChange={handleChange}
+              className="w-full px-3 py-2 border rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="pending">Pending</option>
+              <option value="in-progress">In Progress</option>
+              <option value="completed">Completed</option>
+            </select>
+          </div>
+
+          <div className="md:col-span-2">
+            <label className="block text-gray-700 text-sm font-bold mb-2">
+              Assign To
+            </label>
+            <select
+              multiple
+              value={formData.assignedTo}
+              onChange={handleAssigneeChange}
+              className="w-full px-3 py-2 border rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              {authState.teamMembers.map((member) => (
+                <option key={member._id} value={member._id}>
+                  {member.name} ({member.email})
+                </option>
+              ))}
+            </select>
+            <p className="text-xs text-gray-500 mt-1">
+              Hold Ctrl/Cmd to select multiple members
+            </p>
+          </div>
+
+          <div className="md:col-span-2">
+            <div className="flex items-end gap-2">
+              <div className="flex-1">
+                <label className="block text-gray-700 text-sm font-bold mb-2">
+                  Add Team Member
+                </label>
+                <input
+                  type="email"
+                  value={newMemberEmail}
+                  onChange={(e) => setNewMemberEmail(e.target.value)}
+                  placeholder="Enter email address"
+                  className="w-full px-3 py-2 border rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+              <button
+                onClick={handleAddTeamMember}
+                className="px-3 py-2 bg-green-500 text-white rounded hover:bg-green-600"
+              >
+                Add
+              </button>
+            </div>
+          </div>
         </div>
 
-        <div className="mb-4">
-          <label
-            htmlFor="description"
-            className="block text-gray-700 text-sm font-bold mb-2"
-          >
-            Description
-          </label>
-          <textarea
-            id="description"
-            name="description"
-            value={formData.description}
-            onChange={handleChange}
-            className="w-full px-3 py-2 border rounded shadow-sm focus:outline-none focus:border-blue-500"
-            rows="4"
-          />
-        </div>
-
-        <div className="mb-4">
-          <label
-            htmlFor="dueDate"
-            className="block text-gray-700 text-sm font-bold mb-2"
-          >
-            Due Date
-          </label>
-          <input
-            type="date"
-            id="dueDate"
-            name="dueDate"
-            value={formData.dueDate}
-            onChange={handleChange}
-            className="w-full px-3 py-2 border rounded shadow-sm focus:outline-none focus:border-blue-500"
-          />
-        </div>
-
-        <div className="mb-4">
-          <label
-            htmlFor="priority"
-            className="block text-gray-700 text-sm font-bold mb-2"
-          >
-            Priority
-          </label>
-          <select
-            id="priority"
-            name="priority"
-            value={formData.priority}
-            onChange={handleChange}
-            className="w-full px-3 py-2 border rounded shadow-sm focus:outline-none focus:border-blue-500"
-          >
-            <option value="low">Low</option>
-            <option value="medium">Medium</option>
-            <option value="high">High</option>
-          </select>
-        </div>
-
-        <div className="mb-4">
-          <label
-            htmlFor="status"
-            className="block text-gray-700 text-sm font-bold mb-2"
-          >
-            Status
-          </label>
-          <select
-            id="status"
-            name="status"
-            value={formData.status}
-            onChange={handleChange}
-            className="w-full px-3 py-2 border rounded shadow-sm focus:outline-none focus:border-blue-500"
-          >
-            <option value="pending">Pending</option>
-            <option value="in-progress">In Progress</option>
-            <option value="completed">Completed</option>
-          </select>
-        </div>
-
-        <div className="mb-6">
-          <label
-            htmlFor="assignedTo"
-            className="block text-gray-700 text-sm font-bold mb-2"
-          >
-            Assign To (hold Ctrl/Cmd to select multiple)
-          </label>
-          <select
-            id="assignedTo"
-            name="assignedTo"
-            value={formData.assignedTo}
-            onChange={handleAssigneeChange}
-            className="w-full px-3 py-2 border rounded shadow-sm focus:outline-none focus:border-blue-500"
-            multiple
-          >
-            {teamMembers.map((member) => (
-              <option key={member._id} value={member._id}>
-                {member.name}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div className="flex justify-between">
+        <div className="flex justify-end gap-4 pt-4">
           <button
             type="button"
             onClick={() => navigate("/dashboard")}
