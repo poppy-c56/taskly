@@ -3,7 +3,9 @@ import { Navigate, Outlet } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 
 const PrivateRoute = () => {
-  const { isAuthenticated, loading } = useContext(AuthContext);
+  // const { isAuthenticated, loading } = useContext(AuthContext);
+  const { authState } = useContext(AuthContext);
+  const { isAuthenticated, loading } = authState;
 
   if (loading) {
     return (

@@ -189,3 +189,12 @@ exports.deleteTask = async (req, res, next) => {
     next(error);
   }
 };
+
+exports.getAllTasks = async (req, res, next) => {
+  try {
+    const tasks = await Task.find(); 
+    res.json(tasks);
+  } catch (error) {
+    next(error);
+  }
+};

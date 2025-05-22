@@ -195,3 +195,22 @@ exports.deleteTeam = async (req, res, next) => {
     next(error);
   }
 };
+
+exports.getTeamMembers = async (req, res, next) => {
+  try {
+    const teams = await Team.find({ members: req.user._id }).populate(
+      "members",
+      "name email"
+    );
+    const allMembers = teams.flatMap((team) => team.members);
+    const uniqueMembers = Array.from(
+      new Map(
+        allMembers.map((member) => [member._id.toString(), member])
+      ).values()
+    );
+
+    res.json(uniqueMembers);
+  } catch (error) {
+    next(error);
+  }
+};
