@@ -1,6 +1,6 @@
 # Taskly - Team Task Management App
 
-## ✨ Features
+## Features
 
 - **User Authentication** (Register, Login, Logout)
 - **Team Collaboration** (Create teams, add members)
@@ -10,7 +10,7 @@
 - **Protected Routes** with JWT authentication
 - **REST API** backend with Express.js
 
-## 🛠 Tech Stack
+## Tech Stack
 
 **Frontend:**
 
@@ -27,7 +27,7 @@
 - MongoDB (Mongoose)
 - JWT Authentication
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Prerequisites
 
@@ -39,7 +39,7 @@
 
 ```bash
 # Clone repository
-git clone https://github.com/yourusername/Taskly.git
+git clone https://github.com/poppy-c56/taskly.git
 cd Taskly
 
 # Install backend dependencies
@@ -51,7 +51,7 @@ cd ../client
 npm install
 ```
 
-# Configuration:
+## Configuration:
 
 **Backend .env (server/.env)**:
 
@@ -80,7 +80,7 @@ npm run dev
 npm run dev
 ```
 
-## 🤝 Contributing
+## Contributing
 
 1. **Fork the repository**
 2. **Create a new branch** (git checkout -b feature/feature-name)
