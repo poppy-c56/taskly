@@ -38,6 +38,7 @@ const Dashboard = () => {
             justify-content: center;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 20px;
           }
           
           .loading-card {
@@ -48,6 +49,8 @@ const Dashboard = () => {
             box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
             border: 1px solid rgba(255, 255, 255, 0.2);
             text-align: center;
+            width: 100%;
+            max-width: 400px;
           }
           
           .loading-spinner {
@@ -70,6 +73,22 @@ const Dashboard = () => {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
           }
+
+          @media (max-width: 480px) {
+            .loading-card {
+              padding: 24px;
+              border-radius: 20px;
+            }
+            
+            .loading-text {
+              font-size: 16px;
+            }
+            
+            .loading-spinner {
+              width: 40px;
+              height: 40px;
+            }
+          }
         `}</style>
         <div className="loading-container">
           <div className="loading-card">
@@ -84,14 +103,7 @@ const Dashboard = () => {
   return (
     <>
       <style>{`
-        .dashboard-container {
-          min-height: 100vh;
-          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-          padding: 20px;
-          position: relative;
-          overflow-x: hidden;
-          font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
+        
 
         .dashboard-container::before {
           content: '';
@@ -158,6 +170,7 @@ const Dashboard = () => {
           color: #2d3748;
           margin-bottom: 8px;
           line-height: 1.2;
+          word-wrap: break-word;
         }
 
         .brand-name {
@@ -171,11 +184,12 @@ const Dashboard = () => {
           color: #718096;
           font-size: 18px;
           margin: 0;
+          line-height: 1.4;
         }
 
         .stats-grid {
           display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+          grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
           gap: 24px;
           margin-bottom: 40px;
         }
@@ -192,6 +206,9 @@ const Dashboard = () => {
           animation-fill-mode: both;
           position: relative;
           overflow: hidden;
+          display: flex;
+          flex-direction: column;
+          min-height: 200px;
         }
 
         .stat-card:nth-child(1) { animation-delay: 0.1s; }
@@ -222,6 +239,7 @@ const Dashboard = () => {
           display: flex;
           align-items: center;
           margin-bottom: 20px;
+          flex-shrink: 0;
         }
 
         .stat-icon {
@@ -237,6 +255,7 @@ const Dashboard = () => {
           font-size: 24px;
           font-weight: 700;
           box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+          flex-shrink: 0;
         }
 
         .stat-title {
@@ -244,6 +263,7 @@ const Dashboard = () => {
           font-weight: 600;
           color: #2d3748;
           margin: 0;
+          word-wrap: break-word;
         }
 
         .stat-description {
@@ -251,6 +271,7 @@ const Dashboard = () => {
           font-size: 16px;
           margin-bottom: 24px;
           line-height: 1.5;
+          flex-grow: 1;
         }
 
         .stat-button {
@@ -264,9 +285,12 @@ const Dashboard = () => {
           text-decoration: none;
           display: inline-flex;
           align-items: center;
+          justify-content: center;
           gap: 8px;
           position: relative;
           overflow: hidden;
+          align-self: flex-start;
+          white-space: nowrap;
         }
 
         .stat-button.primary {
@@ -309,11 +333,13 @@ const Dashboard = () => {
           display: flex;
           align-items: center;
           gap: 12px;
+          flex-wrap: wrap;
         }
 
         .activity-title::before {
           content: '📋';
           font-size: 28px;
+          flex-shrink: 0;
         }
 
         .activity-list {
@@ -345,9 +371,11 @@ const Dashboard = () => {
 
         .activity-header {
           display: flex;
-          align-items: center;
+          align-items: flex-start;
           justify-content: space-between;
           margin-bottom: 8px;
+          gap: 12px;
+          flex-wrap: wrap;
         }
 
         .activity-task-title {
@@ -355,6 +383,9 @@ const Dashboard = () => {
           font-weight: 600;
           color: #667eea;
           margin: 0;
+          word-wrap: break-word;
+          flex: 1;
+          min-width: 0;
         }
 
         .activity-status {
@@ -364,6 +395,8 @@ const Dashboard = () => {
           font-weight: 600;
           text-transform: uppercase;
           letter-spacing: 0.5px;
+          white-space: nowrap;
+          flex-shrink: 0;
         }
 
         .status-todo {
@@ -386,12 +419,14 @@ const Dashboard = () => {
           font-size: 14px;
           display: flex;
           align-items: center;
-          gap: 16px;
+          gap: 8px;
+          flex-wrap: wrap;
         }
 
         .activity-meta::before {
           content: '📅';
           font-size: 16px;
+          flex-shrink: 0;
         }
 
         .empty-state {
@@ -422,38 +457,198 @@ const Dashboard = () => {
           width: 16px;
           height: 16px;
           transition: transform 0.2s ease;
+          flex-shrink: 0;
         }
 
         .stat-button:hover .button-icon {
           transform: translateX(2px);
         }
 
+        /* Tablet styles */
+        @media (max-width: 1024px) {
+          .stats-grid {
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+          }
+          
+          .dashboard-container {
+            padding: 16px;
+          }
+        }
+
         @media (max-width: 768px) {
           .dashboard-container {
-            padding: 10px;
+            padding: 12px;
           }
           
           .dashboard-header,
           .activity-section {
             padding: 24px;
             border-radius: 20px;
+            margin-bottom: 20px;
           }
           
           .stat-card {
             padding: 24px;
+            min-height: auto;
           }
           
           .stats-grid {
             grid-template-columns: 1fr;
             gap: 16px;
+            margin-bottom: 20px;
           }
           
           .welcome-title {
             font-size: 24px;
+            line-height: 1.3;
           }
           
           .dashboard-subtitle {
             font-size: 16px;
+          }
+          
+          .stat-header {
+            margin-bottom: 16px;
+          }
+          
+          .stat-icon {
+            width: 40px;
+            height: 40px;
+            font-size: 20px;
+            margin-right: 12px;
+          }
+          
+          .stat-title {
+            font-size: 18px;
+          }
+          
+          .stat-description {
+            font-size: 15px;
+            margin-bottom: 20px;
+          }
+          
+          .activity-title {
+            font-size: 20px;
+            margin-bottom: 20px;
+          }
+          
+          .activity-title::before {
+            font-size: 24px;
+          }
+          
+          .activity-item {
+            padding: 16px 0;
+          }
+          
+          .activity-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 8px;
+          }
+          
+          .activity-task-title {
+            font-size: 15px;
+          }
+          
+          .activity-status {
+            align-self: flex-start;
+          }
+          
+          .activity-meta {
+            font-size: 13px;
+            gap: 6px;
+          }
+          
+          .empty-state {
+            padding: 40px 16px;
+          }
+          
+          .empty-icon {
+            font-size: 48px;
+          }
+          
+          .empty-title {
+            font-size: 18px;
+          }
+          
+          .empty-description {
+            font-size: 15px;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .dashboard-container {
+            padding: 8px;
+          }
+          
+          .dashboard-header,
+          .activity-section {
+            padding: 20px;
+            border-radius: 16px;
+          }
+          
+          .stat-card {
+            padding: 20px;
+            border-radius: 16px;
+          }
+          
+          .stats-grid {
+            gap: 12px;
+          }
+          
+          .welcome-title {
+            font-size: 20px;
+          }
+          
+          .dashboard-subtitle {
+            font-size: 14px;
+          }
+          
+          .stat-button {
+            padding: 10px 20px;
+            font-size: 13px;
+            width: 100%;
+            justify-content: center;
+          }
+          
+          .activity-item:hover {
+            transform: none;
+            margin-left: 0;
+            margin-right: 0;
+            padding-left: 0;
+            padding-right: 0;
+          }
+          
+          .activity-meta::before {
+            font-size: 14px;
+          }
+        }
+
+        @media (max-width: 320px) {
+          .dashboard-container {
+            padding: 6px;
+          }
+          
+          .dashboard-header,
+          .activity-section,
+          .stat-card {
+            padding: 16px;
+          }
+          
+          .welcome-title {
+            font-size: 18px;
+          }
+          
+          .stat-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 8px;
+          }
+          
+          .stat-icon {
+            margin-right: 0;
+            margin-bottom: 8px;
           }
         }
       `}</style>
