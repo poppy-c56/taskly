@@ -32,7 +32,7 @@
 ### Prerequisites
 
 - Node.js (v18+)
-- MongoDB (Local or Atlas)
+- MongoDB Compass
 - Git
 
 ### Installation
