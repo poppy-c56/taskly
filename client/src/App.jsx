@@ -14,6 +14,9 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import NotFound from "./pages/NotFound";
 import TaskForm from "./components/TaskForm";
+import TaskList from "./pages/TaskList";
+import TeamList from "./pages/TeamList";
+
 import "./App.css";
 
 function App() {
@@ -27,17 +30,47 @@ function App() {
 
             <Route element={<PrivateRoute />}>
               <Route element={<MainLayout />}>
+                <Route path="/" element={<Dashboard />} />
                 <Route path="/dashboard" element={<Dashboard />} />
+
+                <Route path="/tasks" element={<TaskList />} />
                 <Route path="/tasks/new" element={<TaskForm />} />
                 <Route path="/tasks/edit/:id" element={<TaskForm />} />
+
+                <Route path="/teams" element={<TeamList />} />
+                <Route
+                  path="/teams/new"
+                  element={
+                    <div style={{ padding: "20px", textAlign: "center" }}>
+                      <h2>Create New Team</h2>
+                      <p>Team creation form will go here.</p>
+                    </div>
+                  }
+                />
+                <Route
+                  path="/teams/:id/view"
+                  element={
+                    <div style={{ padding: "20px", textAlign: "center" }}>
+                      <h2>Team Details</h2>
+                      <p>Team details view will go here.</p>
+                    </div>
+                  }
+                />
+                <Route
+                  path="/teams/:id/edit"
+                  element={
+                    <div style={{ padding: "20px", textAlign: "center" }}>
+                      <h2>Manage Team</h2>
+                      <p>Team management form will go here.</p>
+                    </div>
+                  }
+                />
               </Route>
             </Route>
 
-            <Route path="/" element={<Navigate to="/dashboard" replace />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
 
-          {/* Toast notifications */}
           <Toaster
             position="top-right"
             toastOptions={{

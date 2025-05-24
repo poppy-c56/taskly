@@ -1,4 +1,5 @@
 import { useContext, useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 import axios from "axios";
 
@@ -103,8 +104,6 @@ const Dashboard = () => {
   return (
     <>
       <style>{`
-        
-
         .dashboard-container::before {
           content: '';
           position: absolute;
@@ -464,7 +463,6 @@ const Dashboard = () => {
           transform: translateX(2px);
         }
 
-        /* Tablet styles */
         @media (max-width: 1024px) {
           .stats-grid {
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -675,7 +673,7 @@ const Dashboard = () => {
                 You have {tasks.length} tasks assigned to you. Stay organized
                 and get things done!
               </p>
-              <a href="/tasks" className="stat-button primary">
+              <Link to="/tasks" className="stat-button primary">
                 View all tasks
                 <svg
                   className="button-icon"
@@ -690,7 +688,7 @@ const Dashboard = () => {
                     d="M13 7l5 5m0 0l-5 5m5-5H6"
                   />
                 </svg>
-              </a>
+              </Link>
             </div>
 
             <div className="stat-card">
@@ -702,7 +700,7 @@ const Dashboard = () => {
                 You are a member of {teams.length} teams. Collaborate and
                 achieve more together!
               </p>
-              <a href="/teams" className="stat-button primary">
+              <Link to="/teams" className="stat-button primary">
                 View all teams
                 <svg
                   className="button-icon"
@@ -717,7 +715,7 @@ const Dashboard = () => {
                     d="M13 7l5 5m0 0l-5 5m5-5H6"
                   />
                 </svg>
-              </a>
+              </Link>
             </div>
 
             <div className="stat-card">
@@ -729,7 +727,7 @@ const Dashboard = () => {
                 Need to create a new task? Click below to get started right
                 away.
               </p>
-              <button className="stat-button secondary">
+              <Link to="/tasks/new" className="stat-button secondary">
                 New Task
                 <svg
                   className="button-icon"
@@ -744,7 +742,7 @@ const Dashboard = () => {
                     d="M12 6v6m0 0v6m0-6h6m-6 0H6"
                   />
                 </svg>
-              </button>
+              </Link>
             </div>
           </div>
 
