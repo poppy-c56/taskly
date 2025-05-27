@@ -23,7 +23,6 @@ const TeamDetails = () => {
     const fetchTeamDetails = async () => {
       try {
         setLoading(true);
-        // Mock API call - replace with actual endpoint
         const mockTeam = {
           _id: "1",
           name: "Frontend Development Team",

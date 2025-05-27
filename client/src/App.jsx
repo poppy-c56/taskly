@@ -13,9 +13,14 @@ import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import NotFound from "./pages/NotFound";
-import TaskForm from "./components/TaskForm";
 import TaskList from "./pages/TaskList";
 import TeamList from "./pages/TeamList";
+
+// Import components for actual routing
+import TaskForm from "./components/TaskForm";
+import CreateTeam from "./components/CreateTeam";
+import ManageTeams from "./components/ManageTeams";
+import TeamDetails from "./components/TeamDetails";
 
 import "./App.css";
 
@@ -38,33 +43,11 @@ function App() {
                 <Route path="/tasks/edit/:id" element={<TaskForm />} />
 
                 <Route path="/teams" element={<TeamList />} />
-                <Route
-                  path="/teams/new"
-                  element={
-                    <div style={{ padding: "20px", textAlign: "center" }}>
-                      <h2>Create New Team</h2>
-                      <p>Team creation form will go here.</p>
-                    </div>
-                  }
-                />
-                <Route
-                  path="/teams/:id/view"
-                  element={
-                    <div style={{ padding: "20px", textAlign: "center" }}>
-                      <h2>Team Details</h2>
-                      <p>Team details view will go here.</p>
-                    </div>
-                  }
-                />
-                <Route
-                  path="/teams/:id/edit"
-                  element={
-                    <div style={{ padding: "20px", textAlign: "center" }}>
-                      <h2>Manage Team</h2>
-                      <p>Team management form will go here.</p>
-                    </div>
-                  }
-                />
+                <Route path="/teams/new" element={<CreateTeam />} />
+                <Route path="/teams/:id" element={<TeamDetails />} />
+                <Route path="/teams/:id/view" element={<TeamDetails />} />
+                <Route path="/teams/:id/edit" element={<ManageTeams />} />
+                <Route path="/teams/:id/manage" element={<ManageTeams />} />
               </Route>
             </Route>
 
