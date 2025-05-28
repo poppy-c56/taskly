@@ -51,27 +51,10 @@ cd ../client
 npm install
 ```
 
-## Configuration:
-
-**Backend .env (server/.env)**:
-
-```bash
-MONGODB_URI=mongodb://localhost:27017/taskly
-JWT_SECRET=your_strong_secret_here
-JWT_EXPIRES_IN=90d
-PORT=5000
-```
-
-**Frontend .env (client/.env)**:
-
-```bash
-VITE_API_BASE_URL=http://localhost:5000/api
-```
-
 **Start backend (from /server)**
 
 ```bash
-npm run dev
+node index.js
 ```
 
 **Start frontend (from /client)**
