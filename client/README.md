@@ -1,8 +1,44 @@
-# React + Vite
+# Task Management App - Frontend (React)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## 📄 Description
 
-Currently, two official plugins are available:
+This is the **frontend** of a task management app built using **React**,  and **Tailwind CSS**.  
+👉 The **backend repository** can be found here: [Backend Repo](https://github.com/poppy-c56/taskly/tree/main/server)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+---
+
+## 🚀 Getting Started
+
+Follow these steps to run the app on your computer:
+
+### 1. Clone the repo
+
+```bash
+git clone https://github.com/poppy-c56/taskly.git
+cd taskly/client
+npm install
+```
+
+### 2. Set up environment variables
+
+```bash
+VITE_APP_BASE_URL=http://localhost:8800
+VITE_APP_CLOUDINARY_CLOUD_NAME=cloudinary_cloud_name
+VITE_APP_CLOUDINARY_UPLOAD_PRESET=upload_preset
+
+# For development (local backend)
+# VITE_API_URL=http://localhost:8800
+
+# For production (deployed backend)
+VITE_API_URL=https://taskly-oavu.onrender.com
+```
+
+### 3. Run the app
+
+```bash
+npm run dev
+```
+
+## Demo
+
+See the live version here: (https://taskly-taskmanager.netlify.app)

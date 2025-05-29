@@ -40,7 +40,7 @@
 ```bash
 # Clone repository
 git clone https://github.com/poppy-c56/taskly.git
-cd Taskly
+cd taskly
 
 # Install backend dependencies
 cd server
