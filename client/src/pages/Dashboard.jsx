@@ -21,7 +21,7 @@ const Card = ({ label, count, bg, icon }) => {
       <div className="h-full flex flex-1 flex-col justify-between">
         <p className="text-base text-gray-600">{label}</p>
         <span className="text-2xl font-semibold">{count}</span>
-        <span className="text-sm text-gray-400">{"111 last month"}</span>
+        
       </div>
       <div
         className={clsx(
