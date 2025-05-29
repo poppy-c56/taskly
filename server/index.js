@@ -20,9 +20,12 @@ app.use(
     origin: [
       "http://localhost:3000",
       "http://localhost:3001",
+      "http://localhost:5173",
       "https://taskly-taskmanager.netlify.app",
+      "https://taskly-oavu.onrender.com",
     ],
-    methods: ["GET", "POST", "DELETE", "PUT"],
+    methods: ["GET", "POST", "DELETE", "PUT", "PATCH", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization", "Cookie"],
     credentials: true,
   })
 );
@@ -35,7 +38,6 @@ app.use(cookieParser());
 app.use(morgan("dev"));
 // app.use("/api", routes);
 app.use("/", routes);
-
 
 app.use(routeNotFound);
 app.use(errorHandler);
