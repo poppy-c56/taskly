@@ -23,8 +23,6 @@ npm install
 
 ```bash
 VITE_APP_BASE_URL=http://localhost:8800
-VITE_APP_CLOUDINARY_CLOUD_NAME=cloudinary_cloud_name
-VITE_APP_CLOUDINARY_UPLOAD_PRESET=upload_preset
 
 # For development (local backend)
 # VITE_API_URL=http://localhost:8800
