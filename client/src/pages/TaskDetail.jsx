@@ -264,7 +264,14 @@ const TaskDetail = () => {
                 </div>
 
                 <p className="text-gray-500">
-                  Created At: {new Date(task?.date).toDateString()}
+                  Created At:{" "}
+                  {task?.createdAt
+                    ? moment(task.createdAt).format(
+                        "MMMM DD, YYYY [at] HH:mm:ss"
+                      )
+                    : task?.date
+                    ? moment(task.date).format("MMMM DD, YYYY [at] HH:mm:ss")
+                    : "N/A"}
                 </p>
 
                 <div className="flex items-center gap-8 p-4 border-gray-200 border-y">

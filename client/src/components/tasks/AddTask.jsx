@@ -160,7 +160,7 @@ const AddTask = ({ open, setOpen, task }) => {
                   error={errors.date ? errors.date.message : ""}
                 />
               </div>
-              <div className="flex items-center justify-center w-full mt-4">
+              {/* <div className="flex items-center justify-center w-full mt-4">
                 <label
                   className="flex items-center gap-1 my-4 text-base cursor-pointer text-ascent-2 hover:text-ascent-1"
                   htmlFor="imgUpload"
@@ -176,7 +176,7 @@ const AddTask = ({ open, setOpen, task }) => {
                   <BiImages />
                   <span>Add Assets</span>
                 </label>
-              </div>
+              </div> */}
             </div>
 
             <div className="w-full">

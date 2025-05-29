@@ -21,7 +21,6 @@ const Card = ({ label, count, bg, icon }) => {
       <div className="h-full flex flex-1 flex-col justify-between">
         <p className="text-base text-gray-600">{label}</p>
         <span className="text-2xl font-semibold">{count}</span>
-        
       </div>
       <div
         className={clsx(
@@ -113,7 +112,6 @@ const UserTable = ({ users }) => {
       <tr className="text-black dark:text-white  text-left">
         <th className="py-2">Full Name</th>
         <th className="py-2">Status</th>
-        <th className="py-2">Created At</th>
       </tr>
     </thead>
   );
@@ -142,7 +140,6 @@ const UserTable = ({ users }) => {
           {user?.isActive ? "Active" : "Disabled"}
         </p>
       </td>
-      <td className="py-2 text-sm">{moment(user?.createdAt).fromNow()}</td>
     </tr>
   );
 
@@ -219,7 +216,11 @@ const TaskTable = ({ tasks }) => {
 
       <td className="py-2 hidden md:block">
         <span className="text-base text-gray-600">
-          {moment(task?.date).fromNow()}
+          {task?.createdAt
+            ? moment(task.createdAt).format("MMM DD, YYYY HH:mm")
+            : task?.date
+            ? moment(task.date).format("MMM DD, YYYY HH:mm")
+            : "N/A"}
         </span>
       </td>
     </tr>

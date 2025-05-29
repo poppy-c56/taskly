@@ -8,6 +8,7 @@ import {
 import { toast } from "sonner";
 import { useTrashTastMutation } from "../redux/slices/api/taskApiSlice.js";
 import { BGS, PRIOTITYSTYELS, TASK_TYPE, formatDate } from "../utils/index.js";
+import moment from "moment"; // Add this import
 
 import { Button, ConfirmatioDialog, UserInfo } from "./index";
 import { AddTask, TaskAssets, TaskColor } from "./tasks";
@@ -25,6 +26,17 @@ const Table = ({ tasks }) => {
   const [openEdit, setOpenEdit] = useState(false);
 
   const [deleteTask] = useTrashTastMutation();
+
+  // Add safety check for tasks prop
+  if (!tasks || !Array.isArray(tasks)) {
+    return (
+      <div className="bg-white px-2 md:px-4 pt-4 pb-9 shadow-md rounded">
+        <div className="text-center py-8 text-gray-500">
+          No tasks available
+        </div>
+      </div>
+    );
+  }
 
   const deleteClicks = (id) => {
     setSelected(id);
@@ -56,60 +68,65 @@ const Table = ({ tasks }) => {
   };
 
   const TableHeader = () => (
-    <thead className='w-full border-b border-gray-300 dark:border-gray-600'>
-      <tr className='w-full text-black dark:text-white  text-left'>
-        <th className='py-2'>Task Title</th>
-        <th className='py-2'>Priority</th>
-        <th className='py-2 line-clamp-1'>Created At</th>
-        <th className='py-2'>Assets</th>
-        <th className='py-2'>Team</th>
+    <thead className="w-full border-b border-gray-300 dark:border-gray-600">
+      <tr className="w-full text-black dark:text-white text-left">
+        <th className="py-2">Task Title</th>
+        <th className="py-2">Priority</th>
+        <th className="py-2 line-clamp-1">Created At</th>
+        <th className="py-2">Assets</th>
+        <th className="py-2">Team</th>
+        <th className="py-2">Actions</th>
       </tr>
     </thead>
   );
 
   const TableRow = ({ task }) => (
-    <tr className='border-b border-gray-200 text-gray-600 hover:bg-gray-300/10'>
-      <td className='py-2'>
+    <tr className="border-b border-gray-200 text-gray-600 hover:bg-gray-300/10">
+      <td className="py-2">
         <Link to={`/task/${task._id}`}>
-          <div className='flex items-center gap-2'>
+          <div className="flex items-center gap-2">
             <TaskColor className={TASK_TYPE[task.stage]} />
-            <p className='w-full line-clamp-2 text-base text-black'>
+            <p className="w-full line-clamp-2 text-base text-black">
               {task?.title}
             </p>
           </div>
         </Link>
       </td>
 
-      <td className='py-2'>
+      <td className="py-2">
         <div className={"flex gap-1 items-center"}>
           <span className={clsx("text-lg", PRIOTITYSTYELS[task?.priority])}>
             {ICONS[task?.priority]}
           </span>
-          <span className='capitalize line-clamp-1'>
+          <span className="capitalize line-clamp-1">
             {task?.priority} Priority
           </span>
         </div>
       </td>
 
-      <td className='py-2'>
-        <span className='text-sm text-gray-600'>
-          {formatDate(new Date(task?.date))}
+      <td className="py-2">
+        <span className="text-sm text-gray-600">
+          {task?.createdAt
+            ? moment(task.createdAt).format("MMM DD, YYYY HH:mm")
+            : task?.date
+            ? moment(task.date).format("MMM DD, YYYY HH:mm")
+            : "N/A"}
         </span>
       </td>
 
-      <td className='py-2'>
+      <td className="py-2">
         <TaskAssets
-          activities={task?.activities?.length}
-          subTasks={task?.subTasks}
-          assets={task?.assets?.length}
+          activities={task?.activities?.length || 0}
+          subTasks={task?.subTasks || []}
+          assets={task?.assets?.length || 0}
         />
       </td>
 
-      <td className='py-2'>
-        <div className='flex'>
+      <td className="py-2">
+        <div className="flex">
           {task?.team?.map((m, index) => (
             <div
-              key={m._id}
+              key={m._id || index}
               className={clsx(
                 "w-7 h-7 rounded-full text-white flex items-center justify-center text-sm -mr-1",
                 BGS[index % BGS?.length]
@@ -121,18 +138,18 @@ const Table = ({ tasks }) => {
         </div>
       </td>
 
-      <td className='py-2 flex gap-2 md:gap-4 justify-end'>
+      <td className="py-2 flex gap-2 md:gap-4 justify-end">
         <Button
-          className='text-blue-600 hover:text-blue-500 sm:px-0 text-sm md:text-base'
-          label='Edit'
-          type='button'
+          className="text-blue-600 hover:text-blue-500 sm:px-0 text-sm md:text-base"
+          label="Edit"
+          type="button"
           onClick={() => editClickHandler(task)}
         />
 
         <Button
-          className='text-red-700 hover:text-red-500 sm:px-0 text-sm md:text-base'
-          label='Delete'
-          type='button'
+          className="text-red-700 hover:text-red-500 sm:px-0 text-sm md:text-base"
+          label="Delete"
+          type="button"
           onClick={() => deleteClicks(task._id)}
         />
       </td>
@@ -141,14 +158,22 @@ const Table = ({ tasks }) => {
 
   return (
     <>
-      <div className='bg-white  px-2 md:px-4 pt-4 pb-9 shadow-md rounded'>
-        <div className='overflow-x-auto'>
-          <table className='w-full '>
+      <div className="bg-white px-2 md:px-4 pt-4 pb-9 shadow-md rounded">
+        <div className="overflow-x-auto">
+          <table className="w-full">
             <TableHeader />
             <tbody>
-              {tasks.map((task, index) => (
-                <TableRow key={index} task={task} />
-              ))}
+              {tasks.length > 0 ? (
+                tasks.map((task, index) => (
+                  <TableRow key={task._id || index} task={task} />
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="6" className="text-center py-8 text-gray-500">
+                    No tasks found
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>
@@ -168,6 +193,16 @@ const Table = ({ tasks }) => {
       />
     </>
   );
+};
+
+export const formatExactDateTime = (dateString) => {
+  if (!dateString) return "N/A";
+  return moment(dateString).format("MMMM DD, YYYY [at] HH:mm:ss");
+};
+
+export const formatShortDateTime = (dateString) => {
+  if (!dateString) return "N/A";
+  return moment(dateString).format("MMM DD, YYYY HH:mm");
 };
 
 export default Table;

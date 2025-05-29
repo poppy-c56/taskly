@@ -127,12 +127,39 @@ const getNotificationsList = asyncHandler(async (req, res) => {
   res.status(200).json(notice);
 });
 
-const getUserTaskStatus = asyncHandler(async (req, res) => {
+/* const getUserTaskStatus = asyncHandler(async (req, res) => {
   const tasks = await User.find()
     .populate("tasks", "title stage")
     .sort({ _id: -1 });
 
   res.status(200).json(tasks);
+}); */
+
+const getUserTaskStatus = asyncHandler(async (req, res) => {
+  try {
+    const users = await User.find({ isActive: true })
+      .populate({
+        path: "tasks",
+        select: "title stage priority date isTrashed",
+        match: { isTrashed: { $ne: true } },
+      })
+      .select("name title role email isActive")
+      .sort({ _id: -1 });
+
+    const usersWithTasks = users.map((user) => ({
+      ...user.toObject(),
+      tasks: user.tasks || [],
+    }));
+
+    res.status(200).json(usersWithTasks);
+  } catch (error) {
+    console.log("Error in getUserTaskStatus:", error);
+    res.status(500).json({
+      status: false,
+      message: "Failed to fetch user task status",
+      error: error.message,
+    });
+  }
 });
 
 const markNotificationRead = asyncHandler(async (req, res) => {

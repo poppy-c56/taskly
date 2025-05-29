@@ -36,6 +36,9 @@ const Tasks = () => {
     window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
   }, [open]);
 
+  console.log("Tasks data:", data);
+  console.log("Selected tab:", selected);
+
   return isLoading ? (
     <div className='py-10'>
       <Loading />
@@ -57,7 +60,7 @@ const Tasks = () => {
 
       <div>
         <Tabs tabs={TABS} setSelected={setSelected}>
-          {!status && (
+          {/* {!status && (
             <div className='w-full flex justify-between gap-4 md:gap-x-12 py-4'>
               <TaskTitle label='To Do' className={TASK_TYPE.todo} />
               <TaskTitle
@@ -66,12 +69,21 @@ const Tasks = () => {
               />
               <TaskTitle label='Completed' className={TASK_TYPE.completed} />
             </div>
-          )}
+          )} */}
 
           {selected === 0 ? (
             <BoardView tasks={data?.tasks} />
           ) : (
-            <Table tasks={data?.tasks} />
+            <div className="w-full">
+              
+              {data?.tasks && data.tasks.length > 0 ? (
+                <Table tasks={data.tasks} />
+              ) : (
+                <div className="w-full p-8 text-center text-gray-500">
+                  <p>No tasks found</p>
+                </div>
+              )}
+            </div>
           )}
         </Tabs>
       </div>

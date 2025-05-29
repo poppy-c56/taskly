@@ -96,9 +96,18 @@ const duplicateTask = asyncHandler(async (req, res) => {
       by: userId,
     };
 
+    /* const newTask = await Task.create({
+      ...task,
+      title: "Duplicate - " + task.title,
+    }); */
+
     const newTask = await Task.create({
       ...task,
       title: "Duplicate - " + task.title,
+      createdAt: new Date(), 
+      updatedAt: new Date(),
+      date: new Date(), 
+      activities: [], 
     });
 
     newTask.team = task.team;
